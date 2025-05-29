@@ -12,6 +12,22 @@
             "program": "main_dtro.py",
             "console": "integratedTerminal",
             "justMyCode": true,
+        },
+        {
+            "name": "Python 디버거: main_autolabeling.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main_autolabeling.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+        },
+        {
+            "name": "Python 디버거: main_eval.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main_eval.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
         }
     ]
 }

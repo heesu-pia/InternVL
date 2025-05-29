@@ -2,3 +2,4 @@
 -r requirements/streamlit_demo.txt
 -r requirements/classification.txt
 -r requirements/segmentation.txt
+openpyxl

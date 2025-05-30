@@ -33,7 +33,15 @@ def main():
             print(f"예측 결과 없음: {key}")
 
     f1 = f1_score(y_true, y_pred, pos_label="fallOnEscalator", average="binary")
+    from sklearn.metrics import precision_score, recall_score
+
+    precision = precision_score(
+        y_true, y_pred, pos_label="fallOnEscalator", average="binary"
+    )
+    recall = recall_score(y_true, y_pred, pos_label="fallOnEscalator", average="binary")
     print(f"F1-score: {f1:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall: {recall:.4f}")
 
 
 if __name__ == "__main__":

@@ -10,8 +10,10 @@ from transformers import AutoModel, AutoTokenizer
 
 # ===== 설정 =====
 FRAMES_PATH = "dataset/에스컬레이터_전도_10"
-OUTPUT_CSV = "autolabel_results.csv"
-MODEL_PATH = "OpenGVLab/InternVL2_5-8B"
+# OUTPUT_CSV = "autolabel_results.csv"
+OUTPUT_CSV = "autolabel_results_internvl3-2B.csv"
+# MODEL_PATH = "OpenGVLab/InternVL2_5-8B"
+MODEL_PATH = "OpenGVLab/InternVL3-2B"
 IMAGE_SIZE = 448
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float32

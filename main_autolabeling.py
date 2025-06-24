@@ -11,20 +11,21 @@ from transformers import AutoModel, AutoTokenizer
 # ===== 설정 =====
 FRAMES_PATH = "dataset/에스컬레이터_전도_10"
 # OUTPUT_CSV = "autolabel_results.csv"
-OUTPUT_CSV = "autolabel_results_internvl3-2B.csv"
+# OUTPUT_CSV = "autolabel_results_internvl3-2B.csv"
+OUTPUT_CSV = "autolabel_results_internvl3-8B.csv"
 # MODEL_PATH = "OpenGVLab/InternVL2_5-8B"
-MODEL_PATH = "OpenGVLab/InternVL3-2B"
+# MODEL_PATH = "OpenGVLab/InternVL3-2B"
+MODEL_PATH = "OpenGVLab/InternVL3-8B"
 IMAGE_SIZE = 448
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float32
 PROMPT = (
-    "<image>\n"
     "Is this a situation where someone has fallen on an escalator? "
-    "Estimate the likelihood as a number between 0 and 100 and describe your confidence. "
-    "Format:\n"
-    "- Probability of fall: [0–100]\n"
-    "- Confidence level: [0–100]\n"
-    "- Reason: [your explanation]"
+    "Estimate the likelihood as a number between 0 and 100. "
+    "Please answer in the exact following format (only numbers, no percent signs):\n"
+    "- Probability of fall: \n"
+    "- Confidence level: \n"
+    "- Reason: "
 )
 # ==================
 

@@ -1,14 +1,20 @@
 import csv
 
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, precision_score, recall_score
 
-PRED_CSV = "autolabel_results.csv"  # InternVL 예측 결과
-GT_CSV = "autolabel_results_on_review_vf.csv"  # 정답 파일 (video_id, image, label)
+# PRED_CSV = "autolabel_results.csv"  # InternVL 예측 결과
+# GT_CSV = "autolabel_results_on_review_vf.csv"  # 정답 파일 (video_id, image, label)
+# PRED_CSV = "autolabel_results_internvl3-2B.csv"  # InternVL 예측 결과
+# GT_CSV = "autolabel_results_on_review_vf_internvl_5-8b.csv"  # 정답 파일 (video_id, image, label)
+# PRED_CSV = "autolabel_results_internvl3-8B_noconf.csv"  # InternVL 예측 결과
+# GT_CSV = "autolabel_results_on_review_vf_internvl_5-8b.csv"  # 정답 파일 (video_id, image, label)
+PRED_CSV = "autolabel_results_internvl3-2B_noconf.csv"  # InternVL 예측 결과
+GT_CSV = "autolabel_results_on_review_vf_internvl_5-8b.csv"  # 정답 파일 (video_id, image, label)
 
 
 def load_labels_from_csv(csv_path):
     labels = {}
-    with open(csv_path, newline="", encoding="utf-8") as f:
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
         reader = csv.reader(f)
         header = next(reader)
         label_idx = header.index("label") if "label" in header else 5
@@ -32,13 +38,28 @@ def main():
         else:
             print(f"예측 결과 없음: {key}")
 
-    f1 = f1_score(y_true, y_pred, pos_label="fallOnEscalator", average="binary")
-    from sklearn.metrics import precision_score, recall_score
-
-    precision = precision_score(
-        y_true, y_pred, pos_label="fallOnEscalator", average="binary"
+    valid_labels = {"normal", "fallOnEscalator"}
+    filtered = [
+        (yt, yp)
+        for yt, yp in zip(y_true, y_pred)
+        if yt in valid_labels and yp in valid_labels
+    ]
+    y_true_filtered, y_pred_filtered = zip(*filtered)
+    f1 = f1_score(
+        y_true_filtered, y_pred_filtered, pos_label="fallOnEscalator", average="binary"
     )
-    recall = recall_score(y_true, y_pred, pos_label="fallOnEscalator", average="binary")
+
+    # precision = precision_score(
+    #     y_true, y_pred, pos_label="fallOnEscalator", average="binary"
+    # )
+    # recall = recall_score(y_true, y_pred, pos_label="fallOnEscalator", average="binary")
+    precision = precision_score(
+        y_true_filtered, y_pred_filtered, pos_label="fallOnEscalator", average="binary"
+    )
+    recall = recall_score(
+        y_true_filtered, y_pred_filtered, pos_label="fallOnEscalator", average="binary"
+    )
+
     print(f"F1-score: {f1:.4f}")
     print(f"Precision: {precision:.4f}")
     print(f"Recall: {recall:.4f}")

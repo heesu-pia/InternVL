@@ -1,14 +1,9 @@
 import csv
+import json
 
 from sklearn.metrics import f1_score, precision_score, recall_score
 
-# PRED_CSV = "autolabel_results.csv"  # InternVL 예측 결과
-# GT_CSV = "autolabel_results_on_review_vf.csv"  # 정답 파일 (video_id, image, label)
-# PRED_CSV = "autolabel_results_internvl3-2B.csv"  # InternVL 예측 결과
-# GT_CSV = "autolabel_results_on_review_vf_internvl_5-8b.csv"  # 정답 파일 (video_id, image, label)
-# PRED_CSV = "autolabel_results_internvl3-8B_noconf.csv"  # InternVL 예측 결과
-# GT_CSV = "autolabel_results_on_review_vf_internvl_5-8b.csv"  # 정답 파일 (video_id, image, label)
-PRED_CSV = "autolabel_results_internvl3-2B_noconf.csv"  # InternVL 예측 결과
+PRED_JSON = "autolabel_results_internvl3-2B_PrEng.json"  # 예측 결과 (jsonl)
 GT_CSV = "autolabel_results_on_review_vf_internvl_5-8b.csv"  # 정답 파일 (video_id, image, label)
 
 
@@ -26,8 +21,21 @@ def load_labels_from_csv(csv_path):
     return labels
 
 
+def load_labels_from_json(json_path):
+    labels = {}
+    with open(json_path, "r", encoding="utf-8") as f:
+        for line in f:
+            try:
+                obj = json.loads(line)
+                key = (obj["video_id"], obj["image"])
+                labels[key] = obj["category"]
+            except Exception:
+                continue
+    return labels
+
+
 def main():
-    pred_labels = load_labels_from_csv(PRED_CSV)
+    pred_labels = load_labels_from_json(PRED_JSON)
     gt_labels = load_labels_from_csv(GT_CSV)
 
     y_true, y_pred = [], []
@@ -44,15 +52,13 @@ def main():
         for yt, yp in zip(y_true, y_pred)
         if yt in valid_labels and yp in valid_labels
     ]
+    if not filtered:
+        print("유효한 라벨이 없습니다.")
+        return
     y_true_filtered, y_pred_filtered = zip(*filtered)
     f1 = f1_score(
         y_true_filtered, y_pred_filtered, pos_label="fallOnEscalator", average="binary"
     )
-
-    # precision = precision_score(
-    #     y_true, y_pred, pos_label="fallOnEscalator", average="binary"
-    # )
-    # recall = recall_score(y_true, y_pred, pos_label="fallOnEscalator", average="binary")
     precision = precision_score(
         y_true_filtered, y_pred_filtered, pos_label="fallOnEscalator", average="binary"
     )
